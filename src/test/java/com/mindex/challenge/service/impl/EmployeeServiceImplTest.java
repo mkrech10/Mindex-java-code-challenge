@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -54,12 +54,11 @@ public class EmployeeServiceImplTest {
         assertNotNull(createdEmployee.getEmployeeId());
         assertEmployeeEquivalence(testEmployee, createdEmployee);
 
-
         // Read checks
-        Employee readEmployee = restTemplate.getForEntity(employeeIdUrl, Employee.class, createdEmployee.getEmployeeId()).getBody();
+        Employee readEmployee = restTemplate
+                .getForEntity(employeeIdUrl, Employee.class, createdEmployee.getEmployeeId()).getBody();
         assertEquals(createdEmployee.getEmployeeId(), readEmployee.getEmployeeId());
         assertEmployeeEquivalence(createdEmployee, readEmployee);
-
 
         // Update checks
         readEmployee.setPosition("Development Manager");
@@ -67,12 +66,11 @@ public class EmployeeServiceImplTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        Employee updatedEmployee =
-                restTemplate.exchange(employeeIdUrl,
-                        HttpMethod.PUT,
-                        new HttpEntity<Employee>(readEmployee, headers),
-                        Employee.class,
-                        readEmployee.getEmployeeId()).getBody();
+        Employee updatedEmployee = restTemplate.exchange(employeeIdUrl,
+                HttpMethod.PUT,
+                new HttpEntity<Employee>(readEmployee, headers),
+                Employee.class,
+                readEmployee.getEmployeeId()).getBody();
 
         assertEmployeeEquivalence(readEmployee, updatedEmployee);
     }
